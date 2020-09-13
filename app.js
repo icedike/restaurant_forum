@@ -3,6 +3,7 @@ const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
 const flash = require('connect-flash')
 const session = require('express-session')
+const passport = require('./config/passport')
 const db = require('./models')
 const app = express()
 
@@ -16,6 +17,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }))
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(flash())
 
 app.use((req, res, next) => {
@@ -28,4 +31,4 @@ app.listen(port, () => {
   console.log(`App is listening on port: ${port}`)
 })
 
-require('./routes')(app)
+require('./routes')(app, passport)
