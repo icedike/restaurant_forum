@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const port = process.env.PORT
 
-app.engine('hbs', exphbs({ defaultLayout: 'main', extname: 'hbs' }))
+app.engine('hbs', exphbs({ defaultLayout: 'main', extname: 'hbs', helpers: require('./config/hbs-helper') }))
 app.set('view engine', 'hbs')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(session({
@@ -35,7 +35,6 @@ app.use((req, res, next) => {
   next()
 })
 app.listen(port, () => {
-  db.sequelize.sync()
   console.log(`App is listening on port: ${port}`)
 })
 
