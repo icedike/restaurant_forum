@@ -1,4 +1,5 @@
 const db = require('../models')
+const comment = require('../models/comment')
 const { Restaurant, Category, User, Comment } = db
 
 const pageLimit = 10
@@ -44,6 +45,28 @@ const restController = {
       .then(restaurant => {
         return res.render('restaurant', { restaurant: restaurant.toJSON() })
       })
+  },
+  getFeeds: (req, res) => {
+    return Restaurant.findAll({
+      limit: 10,
+      raw: true,
+      nest: true,
+      order: [['createdAt', 'DESC']],
+      include: [Category]
+    })
+      .then(restaurants => {
+        Comment.findAll({
+          limit: 10,
+          raw: true,
+          nest: true,
+          order: [['createdAt', 'DESC']],
+          include: [User, Restaurant]
+        })
+          .then(comments => {
+            return res.render('feeds', { restaurants, comments })
+          })
+      })
+
   }
 }
 
