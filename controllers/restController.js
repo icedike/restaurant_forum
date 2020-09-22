@@ -1,5 +1,4 @@
 const db = require('../models')
-const comment = require('../models/comment')
 const { Restaurant, Category, User, Comment } = db
 
 const pageLimit = 10
