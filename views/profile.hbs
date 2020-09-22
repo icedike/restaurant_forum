@@ -1,0 +1,14 @@
+<div class="container bg-white">
+  <div class="row">
+    <div class="col-4">
+      <img class="img-responsive center-block" style="width: 250px;" src="{{profile.image}}">
+    </div>
+    <div class="col-8">
+      <h3>{{profile.name}}</h3>
+      <p>{{profile.email}}</p>
+      {{#if self}}
+      <a href="/users/{{profile.id}}/edit" class="btn btn-primary">Edit</a>
+      {{/if}}
+    </div>
+  </div>
+</div>

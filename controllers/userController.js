@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const { User, Favorite } = db
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const userController = {
   signUpPage: (req, res) => {
@@ -68,6 +70,53 @@ const userController = {
             return res.redirect('back')
           })
       })
+  },
+
+  getUser: async (req, res) => {
+    const profile = await User.findByPk(req.params.id)
+    const self = profile.id === req.user.id
+    return res.render('profile', { profile: profile.toJSON(), self })
+  },
+
+  editUser: async (req, res) => {
+    const profile = await User.findByPk(req.params.id)
+    if (profile.id === req.user.id) {
+      return res.render('editProfile', { profile: profile.toJSON() })
+    } else {
+      req.flash('error_messages', '不能修改別人的資料')
+      return res.redirect('/restaurants')
+    }
+  },
+
+  putUser: async (req, res) => {
+    const profile = await User.findByPk(req.params.id)
+    if (profile.id === req.user.id) {
+      if (!req.body.name) {
+        req.flash('error_messages', "name didn't exist")
+        return res.redirect('back')
+      }
+
+      const { file } = req
+      if (file) {
+        imgur.setClientID(IMGUR_CLIENT_ID)
+        imgur.upload(file.path, async (err, img) => {
+          if (err) console.log(err)
+          await profile.update({
+            name: req.body.name,
+            image: file ? img.data.link : profile.image
+          })
+          req.flash('success_messages', 'profile was successfully to update')
+          res.redirect(`/users/${profile.id}`)
+        })
+      } else {
+        await profile.update({ name: req.body.name })
+        req.flash('success_messages', 'profile was successfully to update')
+        res.redirect(`/users/${profile.id}`)
+      }
+    } else {
+      req.flash('error_messages', '不能修改別人的資料')
+      return res.redirect('/restaurants')
+    }
   }
 }
 
