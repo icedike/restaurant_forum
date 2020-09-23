@@ -68,7 +68,10 @@ const restController = {
             return res.render('feeds', { restaurants, comments })
           })
       })
-
+  },
+  getDashboard: async (req, res) => {
+    const restaurant = await Restaurant.findByPk(req.params.id, { include: [Comment, Category] })
+    return res.render('dashboard', { restaurant: restaurant.toJSON() })
   }
 }
 
