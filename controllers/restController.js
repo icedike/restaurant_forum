@@ -74,6 +74,23 @@ const restController = {
   getDashboard: async (req, res) => {
     const restaurant = await Restaurant.findByPk(req.params.id, { include: [Comment, Category] })
     return res.render('dashboard', { restaurant: restaurant.toJSON() })
+  },
+  getTopRestaurant: async (req, res) => {
+    let restaurants = await Restaurant.findAll(
+      {
+        include: [
+          { model: User, as: 'FavoritedUsers' }
+        ]
+      })
+    restaurants = restaurants.map(r => ({
+      ...r.dataValues,
+      isFavorited: req.user.FavoritedRestaurants.map(d => d.id).includes(r.id),
+      FavoriteCount: r.FavoritedUsers.length
+    }))
+
+    restaurants = restaurants.sort((a, b) => b.FavoriteCount - a.FavoriteCount)
+    restaurants = restaurants.slice(0, 10)
+    return res.render('topRestaurant', { restaurants })
   }
 }
 
