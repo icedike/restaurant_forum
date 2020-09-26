@@ -17,6 +17,7 @@ const port = process.env.PORT
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: 'hbs', helpers: require('./config/hbs-helper') }))
 app.set('view engine', 'hbs')
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 app.use(session({
   secret: 'secret',
   resave: false,

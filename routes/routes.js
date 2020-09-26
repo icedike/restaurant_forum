@@ -10,7 +10,6 @@ const commentController = require('../controllers/commentController')
 
 const upload = multer({ dest: 'temp/' })
 
-
 const authenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next()
