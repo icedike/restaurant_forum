@@ -59,7 +59,6 @@ const adminService = {
     if (!req.body.name) {
       return callback({ status: 'error', message: "name didn't exist" })
     }
-    console.log('callback fail...........')
     const { file } = req
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
